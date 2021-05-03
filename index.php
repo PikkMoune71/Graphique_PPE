@@ -42,6 +42,23 @@
         $NbUti = $NbUti . '"'. $Row['NbUti'].'",';
 	}
 
+    /* --- --- --- --- Graphique N°3 --- --- --- --- */
+
+    /* Valeur de la Requête */
+    $LibRole = '';
+    $NbUti = '';
+
+    /* Requête */
+    $Sql = "SELECT COUNT(IdFact) AS NbFacture FROM facturation WHERE IdUti = (SELECT COUNT(IdUti) FROM Utilisateur)";
+    $Result = mysqli_query($MySqli, $Sql);
+
+    /* Récupération de toute les données */
+    while ($Row = mysqli_fetch_array($Result)) {
+        // $Stat = $row['NbCat'] / $row['NbProd'] *100;
+		$LibRole = $LibRole . '"'. $Row['LibRole'].'",';
+        $NbUti = $NbUti . '"'. $Row['NbUti'].'",';
+	}
+
     /* --- --- --- --- Erreur --- --- --- --- */
 
     /* Si rien n'est retourné dans la variable <Result> */
@@ -75,6 +92,11 @@
             <div class="graph">
                 <canvas class="graphique" id="UserDoughnutGraph"></canvas>
             </div>
+            <hr>
+            <div class="graph">
+                <canvas class="graphique" id="PolarAreaGraph"></canvas>
+            </div>
+            <hr>
 
             <script>
 
