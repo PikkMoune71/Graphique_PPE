@@ -135,6 +135,33 @@
 		        }
 		    });
 // #endregion
+// #region GRAPHIQUE 3
+var ctx = document.getElementById("graph2").getContext('2d');
+    			var myChart = new Chart(ctx, {
+        		type: 'doughnut',
+		        data: {
+		            labels: [<?php echo $role; ?>],
+		            datasets: 
+		            [{
+		                data: [<?php echo $utilisateur; ?>],
+		                backgroundColor: [
+                        'rgb(46, 204, 113)',
+                        'rgb(142, 68, 173)',
+                        'rgb(236, 112, 99 )'
+                        ],
+		                borderColor:'#111',
+		                borderWidth: 3,
+		            }]
+		        },
+		     
+		        options: {
+		            scales: {scales:{yAxes: [{beginAtZero: false}], xAxes: [{autoskip: true, maxTicketsLimit: 20}]}},
+		            tooltips:{mode: 'index'},
+		            legend:{display: true, position: 'top', labels: {display: true, fontColor: 'rgb(255,255,255)', fontSize: 16}},
+                    title:{display: true, text:"Nombre d'utilisateurs par Role", fontColor :'rgb(255,255,255)', fontSize: 30}
+		        }
+		    });
+// #endregion
 
 			</script>
 	    </div>
