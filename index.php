@@ -1,142 +1,169 @@
 <?php
-	/* Paramètre de la Base de Données */
-	$host = 'localhost';
-	$user = 'root';
-	$pass = 'root';
-	$db = 'infotools';
-	$mysqli = new mysqli($host,$user,$pass,$db) or die($mysqli->error);
+    /* Paramètre de la Base de Données */
+    $host = 'localhost';
+    $user = 'root';
+    $pass = 'root';
+    $db = 'infotools';
+    $MySqli = new mysqli($host,$user,$pass,$db) or die($mysqli->error);
 
-//#region GRAPHIQUE 1
-	$data1 = '';
-	$data2 = '';
+    /* --- --- --- --- Graphique N°1 --- --- --- --- */
 
-	//query to get data from the table
-	$sql = "SELECT COUNT(produit.IdProd) as NbProd, COUNT(categorie.NumCat) as NbCat, LibCat FROM categorie INNER JOIN produit ON categorie.NumCat = produit.NumCat GROUP BY LibCat";
-    $result = mysqli_query($mysqli, $sql);
+    /* Valeur de la Requête */
+    $LibCat = '';
+    $NbProd = '';
 
-	//loop through the returned data
-	while ($row = mysqli_fetch_array($result)) {
+    /* Requête */
+    $Sql = "SELECT COUNT(produit.IdProd) as NbProd, COUNT(categorie.NumCat) as NbCat, LibCat FROM categorie INNER JOIN produit ON categorie.NumCat = produit.NumCat GROUP BY LibCat";
+    $Result = mysqli_query($MySqli, $Sql);
+
+    /* Récupération de toute les données */
+    while ($Row = mysqli_fetch_array($Result)) {
         // $Stat = $row['NbCat'] / $row['NbProd'] *100;
-		$data1 = $data1 . '"'. $row['LibCat'].'",';
-        $data2 = $data2 . '"'. $row['NbProd'].'",';
+		$LibCat = $LibCat . '"'. $Row['LibCat'].'",';
+        $NbProd = $NbProd . '"'. $Row['NbProd'].'",';
 	}
 
-	$data1 = trim($data1,",");
-// #endregion
+    $LibCat = trim($LibCat,",");
 
-//#region GRAPHIQUE 2
-    $role = '';
-	$utilisateur = '';
+    /* --- --- --- --- Graphique N°2 --- --- --- --- */
 
-	//query to get data from the table
-	$sql = "SELECT COUNT(IdUti) as NbUti, role.LibRole FROM utilisateur INNER JOIN role ON utilisateur.NumRole = role.NumRole GROUP BY role.LibRole";
-    $result = mysqli_query($mysqli, $sql);
+    /* Valeur de la Requête */
+    $LibRole = '';
+    $NbUti = '';
 
-	//loop through the returned data
-	while ($row = mysqli_fetch_array($result)) {
+    /* Requête */
+    $Sql = "SELECT COUNT(IdUti) as NbUti, role.LibRole FROM utilisateur INNER JOIN role ON utilisateur.NumRole = role.NumRole GROUP BY role.LibRole";
+    $Result = mysqli_query($MySqli, $Sql);
+
+    /* Récupération de toute les données */
+    while ($Row = mysqli_fetch_array($Result)) {
         // $Stat = $row['NbCat'] / $row['NbProd'] *100;
-		$role = $role . '"'. $row['LibRole'].'",';
-        $utilisateur = $utilisateur . '"'. $row['NbUti'].'",';
+		$LibRole = $LibRole . '"'. $Row['LibRole'].'",';
+        $NbUti = $NbUti . '"'. $Row['NbUti'].'",';
 	}
-#endregion
-	$data1 = trim($data1,",");
-	if (!$result) {
-		printf("Error: %s\n", mysqli_error($mysqli));
+
+    /* --- --- --- --- Erreur --- --- --- --- */
+
+    /* Si rien n'est retourné dans la variable <Result> */
+    if (!$Result) {
+		printf("Error: %s\n", mysqli_error($MySqli));
 		exit();
 	}
+
 ?>
 
 <!DOCTYPE html>
-<html>
-	<head>
-    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
-		<title>Graphique de InfoTools</title>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<style type="text/css">			
-			body{
-				font-family: Arial;
-			    margin: 80px 100px 10px 100px;
-			    padding: 0;
-			    color: white;
-			    text-align: center;
-			    background: #555652;
-			}
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+        <link rel="stylesheet" href="css/style.css">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <title>InfoTools | Graphiques</title>
+    </head>
+    <body>
+        <h1 class="title">Graphiques d'InfoTools</h1>
+        <div class="container">
+            
+            <div class="graph">
+                <canvas class="graphique" id="MaterielPieGraph"></canvas>
+            </div>
+            <hr>
+            <div class="graph">
+                <canvas class="graphique" id="UserDoughnutGraph"></canvas>
+            </div>
 
-			.container {
-				color: #E8E9EB;
-				background: #222;
-				border: #555652 1px solid;
-				padding: 10px;
-			}
-		</style>
+            <script>
 
-	</head>
+                /* Graphique N°1 */
 
-	<body>	   
-	    <div class="container">	
-	    <h1>Graphiques InfoTools</h1>       
-			<canvas id="graph1" style="width: 100%; height: 65vh; background: #222; border: 1px solid #555652; margin-top: 10px; margin-bottom: 20px;"></canvas>
-            <canvas id="graph2" style="width: 100%; height: 65vh; background: #222; border: 1px solid #555652; margin-top: 10px;"></canvas>
+                var Graph = document.getElementById("MaterielPieGraph").getContext('2d');
+                var myChart = new Chart(Graph, {
+                    type: 'pie',
+                    data: {
+                        labels: [<?php echo $LibCat; ?>],
+                        datasets: 
+                        [{
+                            data: [<?php echo $NbProd; ?>],
+                            backgroundColor: [
+                            'rgb(255, 99, 132)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 205, 86)'
+                            ],
+                            borderColor:'#111',
+                            borderWidth: 3,
+                        }]
+                    },
+                
+                    options: {
+                        scales: {scales:{yAxes: [{beginAtZero: false}], xAxes: [{autoskip: true, maxTicketsLimit: 20}]}},
+                        tooltips: {
+                            mode: 'index'
+                            },
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: { 
+                                display: true,
+                                fontColor: 'rgb(255,255,255)',
+                                fontSize: 16 }
+                                },
+                        title: {
+                            display: true,
+                            position: 'left',
+                            text: "Produits par Catégories",
+                            fontColor :'rgb(255,255,255)',
+                            fontSize: 30 }
+                    }
+                });
 
-			<script>
-// #region GRAPHIQUE 1
-				var ctx = document.getElementById("graph1").getContext('2d');
-    			var myChart = new Chart(ctx, {
-        		type: 'pie',
-		        data: {
-		            labels: [<?php echo $data1; ?>],
-		            datasets: 
-		            [{
-		                data: [<?php echo $data2; ?>],
-		                backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
-                        ],
-		                borderColor:'#111',
-		                borderWidth: 3,
-		            }]
-		        },
-		     
-		        options: {
-		            scales: {scales:{yAxes: [{beginAtZero: false}], xAxes: [{autoskip: true, maxTicketsLimit: 20}]}},
-		            tooltips:{mode: 'index'},
-		            legend:{display: true, position: 'top', labels: {display: true, fontColor: 'rgb(255,255,255)', fontSize: 16}},
-                    title:{display: true, text:"Nombre de produits par catégories", fontColor :'rgb(255,255,255)', fontSize: 30}
-		        }
-		    });
-// #endregion
+                /* Graphique N°2 */
 
-// #region GRAPHIQUE 2
-                var ctx = document.getElementById("graph2").getContext('2d');
-    			var myChart = new Chart(ctx, {
-        		type: 'doughnut',
-		        data: {
-		            labels: [<?php echo $role; ?>],
-		            datasets: 
-		            [{
-		                data: [<?php echo $utilisateur; ?>],
-		                backgroundColor: [
-                        'rgb(46, 204, 113)',
-                        'rgb(142, 68, 173)',
-                        'rgb(236, 112, 99 )'
-                        ],
-		                borderColor:'#111',
-		                borderWidth: 3,
-		            }]
-		        },
-		     
-		        options: {
-		            scales: {scales:{yAxes: [{beginAtZero: false}], xAxes: [{autoskip: true, maxTicketsLimit: 20}]}},
-		            tooltips:{mode: 'index'},
-		            legend:{display: true, position: 'top', labels: {display: true, fontColor: 'rgb(255,255,255)', fontSize: 16}},
-                    title:{display: true, text:"Nombre d'utilisateurs par Role", fontColor :'rgb(255,255,255)', fontSize: 30}
-		        }
-		    });
-// #endregion
-			</script>
-	    </div>
-	    
-	</body>
+                    var Graph = document.getElementById("UserDoughnutGraph").getContext('2d');
+                    var myChart = new Chart(Graph, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [<?php echo $LibRole; ?>],
+                        datasets: 
+                        [{
+                            data: [<?php echo $NbUti; ?>],
+                            backgroundColor: [
+                            'rgb(46, 204, 113)',
+                            'rgb(142, 68, 173)',
+                            'rgb(236, 112, 99 )'
+                            ],
+                            borderColor:'#111',
+                            borderWidth: 3,
+                        }]
+                    },
+                
+                    options: {
+                        scales: {
+                            scales:{yAxes: [{beginAtZero: false}], xAxes: [{autoskip: true, maxTicketsLimit: 20}]}},
+                        tooltips:{ 
+                            mode: 'index'
+                            },
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                display: true,
+                                fontColor: 'rgb(255,255,255)',
+                                fontSize: 16 }
+                                },
+                        title: {
+                            display: true,
+                            position: 'left',
+                            text: "Roles des Utilisateurs",
+                            fontColor :'rgb(255,255,255)', 
+                            fontSize: 30 }
+                    }
+                });
+
+            </script>
+        </div>
+    </body>
 </html>
