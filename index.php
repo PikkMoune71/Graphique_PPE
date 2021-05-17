@@ -75,6 +75,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
         <link rel="stylesheet" href="css/style.css">
@@ -88,15 +89,24 @@
             <div class="graph">
                 <canvas class="graphique" id="MaterielPieGraph"></canvas>
             </div>
+            <button type="button" id="download-pdf" >
+            Download PDF
+            </button>
             <hr>
             <div class="graph">
                 <canvas class="graphique" id="UserDoughnutGraph"></canvas>
             </div>
+<<<<<<< HEAD
+            <button type="button" id="download1-pdf" >
+            Download PDF
+            </button>
+=======
             <hr>
             <div class="graph">
                 <canvas class="graphique" id="PolarAreaGraph"></canvas>
             </div>
             <hr>
+>>>>>>> ae6fd4447ccdf3c46bb02b3a57d89071ff349280
 
             <script>
 
@@ -184,8 +194,43 @@
                             fontSize: 30 }
                     }
                 });
+                
+                //add event listener to button
+                document.getElementById('download-pdf').addEventListener("click", downloadPDF);
 
+                //donwload pdf from original canvas
+                function downloadPDF() {
+                var canvas = document.querySelector('#MaterielPieGraph');
+                    //creates image
+                    var canvasImg = canvas.toDataURL("image/jpeg", 1.0);
+                
+                    //creates PDF from img
+                    var doc = new jsPDF('landscape');
+                    doc.setFontSize(20);
+                    doc.text(15, 15, "Cool Chart");
+                    doc.addImage(canvasImg, 'JPEG', 10, 10, 280, 150 );
+                    doc.save('graphique.pdf');
+                }
+
+                //add event listener to button
+                document.getElementById('download1-pdf').addEventListener("click", downloadPDF);
+
+                //donwload pdf from original canvas
+                function downloadPDF() {
+                var canvas = document.querySelector('#UserDoughnutGraph');
+                    //creates image
+                    var canvasImg = canvas.toDataURL("image/jpeg", 1.0);
+                
+                    //creates PDF from img
+                    var doc = new jsPDF('landscape');
+                    doc.setFontSize(20);
+                    doc.text(15, 15, "Cool Chart");
+                    doc.addImage(canvasImg, 'JPEG', 10, 10, 280, 150 );
+                    doc.save('graphique-test.pdf');
+                }
             </script>
         </div>
     </body>
 </html>
+
+
