@@ -45,19 +45,19 @@
     /* --- --- --- --- Graphique N°3 --- --- --- --- */
 
     /* Valeur de la Requête */
-    $LibRole = '';
-    $NbUti = '';
+    // $LibRole = '';
+    // $NbUti = '';
 
-    /* Requête */
-    $Sql = "SELECT COUNT(IdFact) AS NbFacture FROM facturation WHERE IdUti = (SELECT COUNT(IdUti) FROM Utilisateur)";
-    $Result = mysqli_query($MySqli, $Sql);
+    // /* Requête */
+    // $Sql = "SELECT COUNT(IdFact) AS NbFacture FROM facturation WHERE IdUti = (SELECT COUNT(IdUti) FROM Utilisateur)";
+    // $Result = mysqli_query($MySqli, $Sql);
 
-    /* Récupération de toute les données */
-    while ($Row = mysqli_fetch_array($Result)) {
-        // $Stat = $row['NbCat'] / $row['NbProd'] *100;
-		$LibRole = $LibRole . '"'. $Row['LibRole'].'",';
-        $NbUti = $NbUti . '"'. $Row['NbUti'].'",';
-	}
+    // /* Récupération de toute les données */
+    // while ($Row = mysqli_fetch_array($Result)) {
+    //     // $Stat = $row['NbCat'] / $row['NbProd'] *100;
+	// 	$LibRole = $LibRole . '"'. $Row['LibRole'].'",';
+    //     $NbUti = $NbUti . '"'. $Row['NbUti'].'",';
+	// }
 
     /* --- --- --- --- Erreur --- --- --- --- */
 
@@ -96,17 +96,14 @@
             <div class="graph">
                 <canvas class="graphique" id="UserDoughnutGraph"></canvas>
             </div>
-<<<<<<< HEAD
             <button type="button" id="download1-pdf" >
             Download PDF
             </button>
-=======
             <hr>
             <div class="graph">
                 <canvas class="graphique" id="PolarAreaGraph"></canvas>
             </div>
             <hr>
->>>>>>> ae6fd4447ccdf3c46bb02b3a57d89071ff349280
 
             <script>
 
